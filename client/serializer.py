@@ -11,8 +11,8 @@ from .models import Company, Client
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    key = KeySerializer(many=False)
-    product = ProductSerializer(many=False)
+    key = KeySerializer(many=False, read_only=True)
+    product = ProductSerializer(many=False, read_only=True)
 
     class Meta:
         model = Company
