@@ -14,4 +14,4 @@ six
 static3
 typed-ast
 wrapt
-rest_framework
+djangorestframework
