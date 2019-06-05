@@ -21,7 +21,7 @@ from product.models import Product
 class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     permission_classes = (AllowAny,)
-    serializer_class = CompanySerializer()
+    serializer_class = CompanySerializer
 
     def retrieve(self, request, pk):
         queryset = Company.objects.all()
