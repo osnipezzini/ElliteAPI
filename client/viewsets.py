@@ -29,15 +29,16 @@ class CompanyViewSet(viewsets.ModelViewSet):
         serializer = CompanySerializer(company)
         return Response(serializer.data)
 
-
     def create(self, request):
         cpf = request.data["cnpj"]
         senha = request.data['senha']
         server_ip = request.data['server_ip']
         name = request.data['name']
+        price = request.data['product']['price']
+        product_name = request.data['product']['name']
         key = Key.objects.create(key=request.data['key'],
                                  valid_date=datetime.date.today() + datetime.timedelta(days=30))
-        product = Product.objects.create(name=request.data['product']['name'], price=request.data['product']['price'])
+        product = Product.objects.create(name=product_name, price=price)
 
         password = make_password(senha)
         company = Company.objects.create(cnpj=cpf, name=name, server_ip=server_ip, password=password, key=key,
@@ -45,7 +46,6 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
         return Response(
             {
-                'id': company.id,
-                'senha': password
+                'id': company.id
             }, 200
         )
