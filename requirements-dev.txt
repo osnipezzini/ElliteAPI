@@ -1,0 +1,16 @@
+astroid
+colorama
+dj-database-url
+dj-static
+Django
+isort
+lazy-object-proxy
+mccabe
+Pillow
+pylint
+python-decouple
+pytz
+six
+static3
+typed-ast
+wrapt

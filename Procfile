@@ -1,0 +1,1 @@
+web: gunicorn ellite_erp.wsgi --log-file -
