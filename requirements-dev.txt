@@ -15,3 +15,4 @@ static3
 typed-ast
 wrapt
 djangorestframework
+whitenoise
