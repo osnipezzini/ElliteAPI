@@ -26,7 +26,6 @@ class RegisterViewSet(viewsets.ModelViewSet):
             company = client.company
         else:
             company = Company.objects.get(cnpj=cpf)
-
         serializer = CompanySerializer(instance=company)
         if check_password(senha, company.password):
             valid_date = serializer.data.get('key').get('valid_date')
