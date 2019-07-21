@@ -8,6 +8,7 @@ from client.models import Client, Company
 from client.serializer import CompanySerializer
 from core.utils import Crypto
 from key.models import Key
+from key.serializer import KeySerializer
 
 '''
 Created on 05/06/2019
@@ -47,10 +48,11 @@ class RegisterViewSet(viewsets.ModelViewSet):
                 company.keys.add(key_model)
             else:
                 key_model = company.keys.get(machine=machine)
+            key = KeySerializer(key_model)
 
             return Response(
-                {'key': key_model.key,
-                 'valid_date': key_model.valid_date,
+                {'key': key.key,
+                 'valid_date': key.valid_date,
                  'company': company.name,
                  'server_ip': company.server_ip
                  }, 200)
