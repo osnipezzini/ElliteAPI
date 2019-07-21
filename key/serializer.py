@@ -11,7 +11,7 @@ from key.models import Key
 
 class KeySerializer(serializers.ModelSerializer):
     key = serializers.CharField()
-    valid_date = serializers.DateField(format="%Y-%m-%dT")
+    valid_date = serializers.DateField(format="%Y/%m/%d")
 
     class Meta:
         model = Key
