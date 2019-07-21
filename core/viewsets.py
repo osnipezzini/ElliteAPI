@@ -51,7 +51,7 @@ class RegisterViewSet(viewsets.ModelViewSet):
 
             return Response(
                 {'key': key_model.key,
-                 'valid_date': key_model.valid_date.strftime("%m/%d/%Y"),
+                 'valid_date': key_model.valid_date.strftime("%d/%m/%Y"),
                  'company': company.name,
                  'server_ip': company.server_ip
                  }, 200)
