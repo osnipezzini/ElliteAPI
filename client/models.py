@@ -10,11 +10,18 @@ class Company(models.Model):
     name = models.CharField(max_length=50)
     server_ip = models.GenericIPAddressField()
     password = models.CharField(max_length=100)
-    key = models.ForeignKey(Key, on_delete=models.DO_NOTHING, null=True)
+    keys = models.ManyToManyField(Key, 'keys', 'company_key')
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, null=True)
+    logo = models.ImageField('Company logo', 'company_logo', null=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.password:
+            password = ''.join(e for e in self.cnpj.__str__())
+            self.password = password[:8]
+        super(Company, self).save(*args, **kwargs)
 
 
 class Client(models.Model):
