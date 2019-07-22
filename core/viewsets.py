@@ -49,11 +49,13 @@ class RegisterViewSet(viewsets.ModelViewSet):
             else:
                 key_model = company.keys.get(machine=machine)
 
+
             return Response(
                 {'key': key_model.key,
                  'valid_date': key_model.valid_date.strftime("%d/%m/%Y"),
                  'company': company.name,
-                 'server_ip': company.server_ip
+                 'server_ip': company.server_ip,
+                 'company_logo': company.get_logo_url()
                  }, 200)
         except Exception as e:
             print(e)

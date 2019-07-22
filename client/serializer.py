@@ -4,6 +4,7 @@ Created on 05/06/2019
 @author: osnip
 '''
 from rest_framework import serializers
+from rest_framework.fields import URLField
 
 from key.serializer import KeySerializer
 from product.serializer import ProductSerializer
