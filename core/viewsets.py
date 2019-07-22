@@ -40,7 +40,7 @@ class RegisterViewSet(viewsets.ModelViewSet):
             check_password(senha, company.password)
             keys = company.keys.filter(machine=machine)
             if len(keys) <= 0:
-                key = Crypto(cpf)
+                key = Crypto(machine)
                 key.encrypt()
                 serial = key.generate_serial()
                 key_model = Key(key=serial, machine=machine)
