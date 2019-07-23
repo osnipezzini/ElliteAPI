@@ -25,6 +25,7 @@ class RegisterViewSet(viewsets.ModelViewSet):
         cpf = request.data["cpf"]
         senha = request.data['senha']
         machine = request.data['machine']
+        product = request.data['product']
         if len(cpf) <= 14:
             if len(Client.objects.filter(cpf=cpf)) > 0:
                 client = Client.objects.get(cpf=cpf)
@@ -37,17 +38,22 @@ class RegisterViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'error': 'Dados incorretos !'}, 401)
         try:
+
             check_password(senha, company.password)
-            keys = company.keys.filter(machine=machine)
+            products = company.product.filter(product_type=product)
+            if len(products) == 0:
+                return Response({'error': 'Cliente não possui produto cadastrado !'}, 401)
+            else:
+                keys = products.keys.filter(machine=machine)
             if len(keys) <= 0:
                 key = Crypto(machine)
                 key.encrypt()
                 serial = key.generate_serial()
                 key_model = Key(key=serial, machine=machine)
                 key_model.save()
-                company.keys.add(key_model)
+                company.product.keys.add(key_model)
             else:
-                key_model = company.keys.get(machine=machine)
+                key_model = company.product.keys.get(machine=machine)
 
 
             return Response(

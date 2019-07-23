@@ -31,18 +31,13 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         cpf = request.data["cnpj"]
-        senha = request.data['senha']
+        senha = ''
+        if request.data['senha'] != '':
+            senha = make_password(request.data['senha'])
+        print(senha)
         server_ip = request.data['server_ip']
         name = request.data['name']
-        price = request.data['product']['price']
-        product_name = request.data['product']['name']
-        key = Key.objects.create(key=request.data['key'],
-                                 valid_date=datetime.date.today() + datetime.timedelta(days=30))
-        product = Product.objects.create(name=product_name, price=price)
-
-        password = make_password(senha)
-        company = Company.objects.create(cnpj=cpf, name=name, server_ip=server_ip, password=password, key=key,
-                                         product=product)
+        company = Company.objects.create(cnpj=cpf, name=name, server_ip=server_ip, password=senha)
 
         return Response(
             {
