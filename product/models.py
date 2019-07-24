@@ -1,10 +1,6 @@
 from django.db import models
 
 
-# Create your models here.
-from key.models import Key
-
-
 class Product(models.Model):
     SERVER = 'SVR'
     CLIENT = 'CLI'
@@ -23,7 +19,6 @@ class Product(models.Model):
     slug = models.SlugField(null=True)
     limit_register = models.IntegerField(default=10)
     product_type = models.CharField(max_length=5, choices=PRODUCT_TYPE_CHOICES, default=CLIENT)
-    keys = models.ManyToManyField(Key)
 
     def __str__(self):
         return self.name

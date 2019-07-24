@@ -11,7 +11,8 @@ class Company(models.Model):
     server_ip = models.GenericIPAddressField()
     password = models.CharField(max_length=100, null=True, blank=True)
     product = models.ManyToManyField(Product, 'products')
-    logo = models.ImageField('Company logo', 'company_logo', upload_to='img/', default='img/no-logo.png', null=True, blank=True)
+    logo = models.ImageField('Company logo', upload_to='img/', default='img/no-logo.png', null=True, blank=True)
+    keys = models.ManyToManyField(Key)
 
     def __str__(self):
         return self.name
@@ -24,10 +25,8 @@ class Company(models.Model):
         super(Company, self).save(*args, **kwargs)
 
     def get_logo_url(self):
-        print(self.company_logo.url)
-        if self.company_logo:
-            logo = "{0}".format(self.company_logo.url)
-            print(logo)
+        if self.logo:
+            logo = "{0}".format(self.logo.url)
             return logo
         else:
             return ''

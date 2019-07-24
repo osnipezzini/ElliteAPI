@@ -1,4 +1,7 @@
 # _*_ coding: UTF-8 _*_
+import logging
+
+from django.conf.global_settings import DEBUG
 from django.contrib.auth.hashers import check_password
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
@@ -20,6 +23,11 @@ class RegisterViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = CompanySerializer
 
+    def strip_end(self, text, suffix):
+        if not text.endswith(suffix):
+            return text
+        return text[:len(text) - len(suffix)]
+
     def create(self, request):
         cpf = request.data["cpf"]
         senha = request.data['senha']
@@ -29,29 +37,43 @@ class RegisterViewSet(viewsets.ModelViewSet):
             if len(Client.objects.filter(cpf=cpf)) > 0:
                 client = Client.objects.get(cpf=cpf)
                 company = client.company
+                logging.debug(f"Cliente : {client.name} = Company : {company.name}")
+                #print(f"Cliente : {client.name} = Company : {company.name}")
             else:
                 return Response({'error': 'Dados incorretos !'}, 401)
         else:
             if len(Company.objects.filter(cnpj=cpf)) > 0:
                 company = Company.objects.get(cnpj=cpf)
+                logging.debug(f"Company : {company.name}")
             else:
                 return Response({'error': 'Dados incorretos !'}, 401)
+        logo = str(request.get_raw_uri())
+        logging.debug(logo)
+        old_path = request.get_full_path()
+        logo = self.strip_end(logo, old_path) + '/' + company.logo.url
+        logging.debug(f"Logo : {logo}")
         try:
 
             check_password(senha, company.password)
             products = company.product.filter(product_type=product)
-            keys = Key.objects.filter(machine=machine)
+            keys = company.keys.filter(machine=machine)
+            for key in keys:
+                    logging.debug(f"Chaves : {key.key}")
             if len(products) == 0:
-                print(product)
+                logging.debug("Sem produto !")
                 return Response({'error': 'Cliente não possui produto cadastrado !'}, 401)
             else:
+                for product in products:
+                    logging.debug(f"Product : {product.name}")
                 if len(keys) <= 0:
                     key = Crypto(machine)
                     key.encrypt()
                     serial = key.generate_serial()
+                    logging.debug(f"Serial gerado {serial}")
                     key_model = Key(key=serial, machine=machine)
                     key_model.save()
-                    company.product.keys.add(key_model)
+
+                    company.keys.add(key_model)
                 else:
                     key_model = Key.objects.get(machine=machine)
 
@@ -60,8 +82,8 @@ class RegisterViewSet(viewsets.ModelViewSet):
                  'valid_date': key_model.valid_date.strftime("%d/%m/%Y"),
                  'company': company.name,
                  'server_ip': company.server_ip,
-                 'company_logo': company.get_logo_url()
+                 'company_logo': logo
                  }, 200)
         except Exception as e:
-            print(e)
+            logging.debug(e)
             return Response({'error': 'Dados incorretos !'}, 401)

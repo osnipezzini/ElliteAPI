@@ -27,6 +27,24 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 TEMPLATE_DEBUG = DEBUG
 
+import logging
+logger = logging.getLogger()
+logger.handlers = []
+
+formatter = logging.Formatter(
+    '[ %(asctime)s - %(levelname)s ] %(message)s',
+    datefmt='%d/%m/%Y-%H:%M:%S'
+)
+
+if DEBUG:
+    logger.setLevel(logging.DEBUG)
+else:
+    logger.setLevel(logging.INFO)
+console = logging.StreamHandler()
+console.setFormatter(formatter)
+logger.addHandler(console)
+
+
 ALLOWED_HOSTS = config('ALLOWED_HOSTS')
 
 # Application definition
