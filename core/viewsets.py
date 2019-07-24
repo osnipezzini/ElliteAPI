@@ -8,7 +8,6 @@ from client.models import Client, Company
 from client.serializer import CompanySerializer
 from core.utils import Crypto
 from key.models import Key
-from key.serializer import KeySerializer
 
 '''
 Created on 05/06/2019
@@ -41,20 +40,20 @@ class RegisterViewSet(viewsets.ModelViewSet):
 
             check_password(senha, company.password)
             products = company.product.filter(product_type=product)
+            keys = Key.objects.filter(machine=machine)
             if len(products) == 0:
+                print(product)
                 return Response({'error': 'Cliente não possui produto cadastrado !'}, 401)
             else:
-                keys = products.keys.filter(machine=machine)
-            if len(keys) <= 0:
-                key = Crypto(machine)
-                key.encrypt()
-                serial = key.generate_serial()
-                key_model = Key(key=serial, machine=machine)
-                key_model.save()
-                company.product.keys.add(key_model)
-            else:
-                key_model = company.product.keys.get(machine=machine)
-
+                if len(keys) <= 0:
+                    key = Crypto(machine)
+                    key.encrypt()
+                    serial = key.generate_serial()
+                    key_model = Key(key=serial, machine=machine)
+                    key_model.save()
+                    company.product.keys.add(key_model)
+                else:
+                    key_model = Key.objects.get(machine=machine)
 
             return Response(
                 {'key': key_model.key,
